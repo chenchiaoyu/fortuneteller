@@ -4,6 +4,8 @@ import WeekCard from "./components/WeekCard";
 import DetailPanel from "./components/DetailPanel";
 
 const CURRENT_WEEK_ID = 1;
+const MIN_ID = Math.min(...WEEKS.map(w => w.id));
+const MAX_ID = Math.max(...WEEKS.map(w => w.id));
 
 export default function App() {
   const [selected, setSelected]   = useState(CURRENT_WEEK_ID);
@@ -201,11 +203,10 @@ export default function App() {
       }}>
         <button
           onClick={() => {
-            const newId = Math.max(1, selected - 1);
-            setSelected(newId);
-            if (isMobile) setView("detail");
+            const idx = WEEKS.findIndex(w => w.id === selected);
+            if (idx > 0) { setSelected(WEEKS[idx-1].id); if (isMobile) setView("detail"); }
           }}
-          disabled={selected === 1}
+          disabled={selected === MIN_ID}
           style={{
             background: "none", border: "1px solid rgba(255,255,255,0.1)",
             color: selected === 1 ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.7)",
@@ -215,15 +216,14 @@ export default function App() {
           }}
         >← 上一週</button>
         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
-          第 {selected} / {WEEKS.length} 週
+          第 {WEEKS.findIndex(w=>w.id===selected)+1} / {WEEKS.length} 週
         </span>
         <button
           onClick={() => {
-            const newId = Math.min(WEEKS.length, selected + 1);
-            setSelected(newId);
-            if (isMobile) setView("detail");
+            const idx = WEEKS.findIndex(w => w.id === selected);
+            if (idx < WEEKS.length-1) { setSelected(WEEKS[idx+1].id); if (isMobile) setView("detail"); }
           }}
-          disabled={selected === WEEKS.length}
+          disabled={selected === MAX_ID}
           style={{
             background: "none", border: "1px solid rgba(255,255,255,0.1)",
             color: selected === WEEKS.length ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.7)",
